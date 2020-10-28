@@ -1,67 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+
 import '../models/transactions.dart';
+import './transaction_item.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transactions> transactions;
   final Function deleteTx;
+
   TransactionList(this.transactions, this.deleteTx);
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 350,
-      child: transactions.isEmpty
-          ? Column(
-              children: [
-                Text(
-                  'No transactions added yet!',
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  height: 200,
-                  child: Image.asset(
-                    'assets/images/waiting.png',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ],
-            )
-          : ListView.builder(
-              itemBuilder: (ctx, index) => Card(
-                elevation: 5,
-                margin: EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 5,
-                ),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    radius: 30,
-                    child: Padding(
-                      padding: EdgeInsets.all(10),
-                      child: FittedBox(
-                        child: Text('Rs. ${transactions[index].amount}'),
-                      ),
-                    ),
-                  ),
-                  title: Text(
-                    transactions[index].title,
+    return transactions.isEmpty
+        ? LayoutBuilder(
+            builder: (ctx, constraints) {
+              return Column(
+                children: [
+                  Text(
+                    'No transactions added yet!',
                     style: Theme.of(context).textTheme.headline6,
                   ),
-                  subtitle: Text(
-                    DateFormat.yMMMd().format(transactions[index].date),
+                  const SizedBox(
+                    height: 20,
                   ),
-                  trailing: IconButton(
-                    onPressed: () => deleteTx(transactions[index].id),
-                    icon: Icon(Icons.delete),
-                    color: Theme.of(context).errorColor,
+                  Container(
+                    height: constraints.maxHeight * 0.6,
+                    child: Image.asset(
+                      'assets/images/waiting.png',
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-              ),
-              itemCount: transactions.length,
-            ),
-    );
+                ],
+              );
+            },
+          )
+        : ListView(
+            children: transactions
+                .map((tx) => TransactionItem(
+                      key: ValueKey(tx.id),
+                      transaction: tx,
+                      deleteTx: deleteTx,
+                    ))
+                .toList(),
+          );
   }
 }

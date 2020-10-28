@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import '../models/transactions.dart';
 import './chart_bar.dart';
 
 class Chart extends StatelessWidget {
   final List<Transactions> recentTransactions;
+
   Chart(this.recentTransactions);
+
   List<Map<String, Object>> get groupedTransactionValues {
     return List.generate(7, (index) {
       final weekDay = DateTime.now().subtract(
@@ -42,6 +45,7 @@ class Chart extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: groupedTransactionValues
               .map((data) => Flexible(
                     fit: FlexFit.tight,
